@@ -33,10 +33,23 @@ class Background:
         """Init background image with img_path and selection mode"""
         self.img_path = img_path
         self.image = cv2.imread(img_path)
+        self.mask = cv2.imread(img_path)
         self.selection = selection
         self.rois = [(522, 1257, 1084, 193),
                      (413, 1151, 279, 209),
                      (1326, 1123, 316, 277)]
+
+
+    def init_mask(self):
+        """Init background mask.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        self.mask[:] = (255, 255, 255)
 
 
     def init_roi(self):
@@ -87,21 +100,22 @@ class Background:
         return (nut_placer_row, nut_placer_col)
 
 
-    def input_nut(self, nut, threshold=50):
+    def input_nut(self, nut, nut_placer_row, nut_placer_col, threshold=50):
         """Take one object and merge it with the background image.
 
         Args:
             nut: A nut object representing the object to merge.
             threshold: An int representing the threshold when creating
             object mask.
+            nut_placer_row: An int representing a position in the matrix
+            nut_placer_col: An int representing a position same as above
+            but for column.
 
         Returns:
             None
         """
 
         rows, cols, _channels = nut.image.shape
-
-        nut_placer_row, nut_placer_col = self.get_nut_placer()
 
         roi = self.image[nut_placer_row:nut_placer_row + rows,
                          nut_placer_col:nut_placer_col + cols]
@@ -115,6 +129,33 @@ class Background:
         self.image[nut_placer_row:nut_placer_row + rows,
                    nut_placer_col:nut_placer_col + cols] = dst
 
+    def msk_input_nut(self, nut, nut_placer_row, nut_placer_col, threshold=50):
+        """Take one object and merge it with the background image mask.
+
+        Args:
+            nut: A nut object representing the object to merge.
+            threshold: An int representing the threshold when creating
+            object mask.
+            nut_placer_row: An int representing a position in the matrix
+            nut_placer_col: An int representing a position same as above
+            but for column.
+
+        Returns:
+            None
+        """
+
+        rows, cols, _channels = nut.image.shape
+
+        roi = self.mask[nut_placer_row:nut_placer_row + rows,
+                        nut_placer_col:nut_placer_col + cols]
+
+        _mask, mask_inv = nut.get_mask(threshold)
+
+        mask_background_bg = cv2.bitwise_and(roi, roi, mask=mask_inv)
+
+        self.mask[nut_placer_row:nut_placer_row + rows,
+                  nut_placer_col:nut_placer_col + cols] = mask_background_bg
+
 
     def save_background(self, save_path):
         """Save the background image.
@@ -127,3 +168,15 @@ class Background:
             None
         """
         cv2.imwrite(save_path, self.image)
+
+    def save_background_mask(self, save_path):
+        """Save the background image mask.
+
+        Args:
+            save_path: A string representing the filename and location to
+            save to.
+
+        Returns:
+            None
+        """
+        cv2.imwrite(save_path, self.mask)
