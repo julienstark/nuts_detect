@@ -40,13 +40,13 @@ def main():
     object_name = os.environ['ND_DSET_OBJ_NAME']
     background = bg.Background(img_loc + os.environ['ND_DSET_BG_NAME'] +
                                '.jpeg')
+    background.init_mask()
 
     # MAIN LOOP - OBJECT CREATION AND INPUT #
 
     for _nut_nbr in range(nuts_nbr):
 
-        rand_nut_nbr = randint(1, 10)
-        nut = nt.Nuts(img_loc + object_name + str(rand_nut_nbr) + '.jpeg')
+        nut = nt.Nuts(img_loc + object_name + str(randint(1, 10)) + '.jpeg')
 
         random_scale = uniform(1 - scale, 1 + scale)
         random_rot = randint(0, 180)
@@ -54,9 +54,13 @@ def main():
         nut.scale_nut(height_scale=random_scale, width_scale=random_scale)
         nut.rotate_nut(rotate_angle=random_rot)
 
-        background.input_nut(nut, threshold)
+        nut_placer_row, nut_placer_col = background.get_nut_placer()
+        background.input_nut(nut, nut_placer_row, nut_placer_col, threshold)
+        background.msk_input_nut(nut, nut_placer_row, nut_placer_col,
+                                 threshold)
 
     background.save_background(img_loc + filename)
+    background.save_background_mask(img_loc + "mask_" + filename)
 
 if __name__ == '__main__':
     main()
