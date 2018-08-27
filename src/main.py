@@ -48,17 +48,22 @@ def main():
 
         nut = nt.Nuts(img_loc + object_name + str(randint(1, 10)) + '.jpeg')
 
+        # Apply nut transformation
         random_scale = uniform(1 - scale, 1 + scale)
         random_rot = randint(0, 180)
-
         nut.scale_nut(height_scale=random_scale, width_scale=random_scale)
         nut.rotate_nut(rotate_angle=random_rot)
 
+        # Merge the nut in the background image and retrieve the mask
         nut_placer_row, nut_placer_col = background.get_nut_placer()
         background.input_nut(nut, nut_placer_row, nut_placer_col, threshold)
         background.msk_input_nut(nut, nut_placer_row, nut_placer_col,
                                  threshold)
 
+        # Smooth some ugly edges
+        background.smoothing(nut, nut_placer_row, nut_placer_col)
+
+    # Save the final image and the final mask
     background.save_background(img_loc + filename)
     background.save_background_mask(img_loc + "mask_" + filename)
 

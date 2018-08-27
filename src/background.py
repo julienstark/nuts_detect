@@ -9,6 +9,7 @@ merge and region of interest (ROI) definiton.
 from random import randint
 
 import cv2
+import numpy as np
 
 
 class Background:
@@ -128,6 +129,35 @@ class Background:
         dst = cv2.add(background_bg, nut_fg)
         self.image[nut_placer_row:nut_placer_row + rows,
                    nut_placer_col:nut_placer_col + cols] = dst
+
+
+    def smoothing(self, nut, nut_placer_row, nut_placer_col):
+        """Smooth some edges on the nut.
+
+        If the grayscale picture of the nut has one pixel level below a
+        specific value, apply some smoothing on this pixel with a 3x3 filter.
+
+        Args:
+            nut: A nut object representing the object to smooth.
+            nut_placer_row: An int representing a position in the matrix.
+            nut_placer_col: An int representing a position same as above
+            but for column.
+
+        Returns:
+            None
+        """
+        kernel = np.ones((3, 3), np.float32)/9
+        nut_gray = cv2.cvtColor(nut.image, cv2.COLOR_BGR2GRAY)
+        height, width = nut_gray.shape[:2]
+        for i in range(height):
+            for j in range(width):
+                if nut_gray[i, j] < 30:
+                    input_zone = self.image[nut_placer_row + i - 1:nut_placer_row + i + 1,
+                                            nut_placer_col + j - 1:nut_placer_col + j + 1]
+                    dst = cv2.filter2D(input_zone, -1, kernel)
+                    self.image[nut_placer_row + i - 1:nut_placer_row + i + 1,
+                               nut_placer_col + j - 1:nut_placer_col + j + 1] = dst
+
 
     def msk_input_nut(self, nut, nut_placer_row, nut_placer_col, threshold=50):
         """Take one object and merge it with the background image mask.
