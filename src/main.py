@@ -54,6 +54,10 @@ def main():
         nut.scale_nut(height_scale=random_scale, width_scale=random_scale)
         nut.rotate_nut(rotate_angle=random_rot)
 
+        # Smooth nut edges via scaling (efficiency not assessed)
+        # nut.scale_nut(height_scale=(1-scale), width_scale=(1-scale))
+        # nut.scale_nut(height_scale=(1/(1-scale)), width_scale=(1/(1-scale)))
+
         # Merge the nut in the background image and retrieve the mask
         nut_placer_row, nut_placer_col = background.get_nut_placer()
         background.input_nut(nut, nut_placer_row, nut_placer_col, threshold)
