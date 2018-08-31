@@ -23,6 +23,7 @@ class Nuts:
 
     def __init__(self, img_path):
         """Init nut image with img_path"""
+
         self.img_path = img_path
         self.image = cv2.imread(img_path)
 
@@ -39,6 +40,7 @@ class Nuts:
         Returns:
             None
         """
+
         height, width = self.image.shape[:2]
         self.image = cv2.resize(self.image,
                                 (int(width_scale*width),
@@ -55,6 +57,7 @@ class Nuts:
         Returns:
             None
         """
+
         rows, cols, _channel = self.image.shape
         r_mat = cv2.getRotationMatrix2D((cols/2, rows/2),
                                         rotate_angle, 1)
@@ -72,6 +75,7 @@ class Nuts:
             A tuple representing two numpy arrays with the mask and its
             inverse.
         """
+
         nut_gray = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
         _ret, mask = cv2.threshold(nut_gray, threshold, 255, cv2.THRESH_BINARY)
         mask_inv = cv2.bitwise_not(mask)
