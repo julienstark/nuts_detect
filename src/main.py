@@ -14,7 +14,7 @@ import nuts as nt
 import background as bg
 import operations as op
 
-def main(): # pylint: disable=too-many-locals
+def main(): # pylint: disable=too-many-locals,too-many-statements
     """Main function for client loop."""
 
     # PYTHON PARSER VIA ARGPARSE #
@@ -39,15 +39,17 @@ def main(): # pylint: disable=too-many-locals
     filename = args['filename']
 
     # ENVIRON VAR INITIALIZATION #
-
+    print("Initializing environment variables...", end='')
     img_loc = os.environ['ND_DSET_FOLDER'] + 'imgs/data/'
     object_name = os.environ['ND_DSET_OBJ_NAME']
     resize = int(os.environ['ND_DSET_RESIZE_FLAG'])
     rszx = int(os.environ['ND_DSET_RESIZE_COL'])
     rszy = int(os.environ['ND_DSET_RESIZE_ROW'])
     cls = int(os.environ['ND_DSET_CLASS'])
+    print("OK")
 
     # MAIN LOOP - OBJECT CREATION AND INPUT #
+    print("\n ** Generating background and objects... **")
     for itera in range(1, iter_nbr + 1):
 
         # Initialize background
@@ -120,9 +122,11 @@ def main(): # pylint: disable=too-many-locals
                                    '.jpg')
         background.save_background_mask(img_loc + "mask/mask_" + filename +
                                         str(itera) + '.jpg')
+    print("Done!")
 
 
     # VALIDATION PHASE #
+    print("\n ** Validation Phase **")
     validate(img_loc, os.environ['ND_DSET_FOLDER'], iter_nbr, cls)
 
 
@@ -139,25 +143,30 @@ def validate(img_loc, txt_loc, iter_nbr, cls): # pylint: disable=too-many-branch
         None
     """
 
+    gen_error = False
+
     print("Checking generated image number...", end="")
     if op.validate_img_number(img_loc + "gen/", iter_nbr):
         print("OK")
     else:
         print("ERR")
+        gen_error = True
 
     print("Checking generated mask number...", end="")
     if op.validate_img_number(img_loc + "mask/", iter_nbr):
         print("OK")
     else:
         print("ERR")
+        gen_error = True
 
     print("Checking generated textfile number...", end="")
     if op.validate_img_number(txt_loc + 'txt/', iter_nbr):
         print("OK")
     else:
         print("ERR")
+        gen_error = True
 
-    print("\nChecking textfiles values...")
+    print("Checking textfiles values...")
     err_flag = False
     for file_iter in range(1, op.get_file_number(txt_loc + 'txt/') + 1):
         iter_list = []
@@ -174,8 +183,12 @@ def validate(img_loc, txt_loc, iter_nbr, cls): # pylint: disable=too-many-branch
 
     if err_flag:
         print("Txt files values error.")
+        gen_error = True
     else:
         print("Txt files values OK")
+
+    if not gen_error:
+        print("Validation phase succeeded!")
 
 
 if __name__ == '__main__':
