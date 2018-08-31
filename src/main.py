@@ -42,6 +42,10 @@ def main(): # pylint: disable=too-many-locals
 
     img_loc = os.environ['ND_DSET_FOLDER'] + 'imgs/data/'
     object_name = os.environ['ND_DSET_OBJ_NAME']
+    resize = int(os.environ['ND_DSET_RESIZE_FLAG'])
+    rszx = int(os.environ['ND_DSET_RESIZE_COL'])
+    rszy = int(os.environ['ND_DSET_RESIZE_ROW'])
+    cls = int(os.environ['ND_DSET_CLASS'])
 
     # MAIN LOOP - OBJECT CREATION AND INPUT #
     for itera in range(1, iter_nbr):
