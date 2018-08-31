@@ -66,3 +66,5 @@ Replace the iter value by the number of images you would like to generate.
 Replace 0.25 by the scaling effect you would like to put on all merged image. Recommendation is to keep 0.25.
 Replace the second 50 by the threshold value you would like to apply when creating object mask for merging.
 Replace test_bg by the filename of the image you would like to save (without extension).
+
+Output images will appear in imgs/data/gen, output masks in imgs/data/mask and output txt in /txt.
