@@ -107,16 +107,18 @@ def main(): # pylint: disable=too-many-locals
             background.smoothing(nut, nut_placer_row, nut_placer_col)
 
             # Write nuts info to the file
-            line = "1 {} {} {} {}\n".format(nut_placer_row, nut_placer_col,
-                                            cols, rows)
-            with open(file_path, 'a') as filen:
-                filen.write(line)
+            hgt, wid, _chan = background.image.shape
+            backshape = (hgt, wid)
+            nutshape = (rows, cols)
+            placer = (nut_placer_row, nut_placer_col)
+            op.write_nuts_info_file(cls, placer, nutshape, backshape,
+                                    file_path)
 
 
         # Save the final image and the final mask
-        background.save_background(img_loc + filename + str(itera) + '.jpeg')
+        background.save_background(img_loc + filename + str(itera) + '.jpg')
         background.save_background_mask(img_loc + "mask_" + filename +
-                                        str(itera) + '.jpeg')
+                                        str(itera) + '.jpg')
 
 
 if __name__ == '__main__':
