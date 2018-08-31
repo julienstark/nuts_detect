@@ -48,7 +48,7 @@ def main(): # pylint: disable=too-many-locals
     cls = int(os.environ['ND_DSET_CLASS'])
 
     # MAIN LOOP - OBJECT CREATION AND INPUT #
-    for itera in range(1, iter_nbr):
+    for itera in range(1, iter_nbr + 1):
 
         # Initialize background
         random_bg_nbr = randint(1, op.get_file_number(img_loc + "backgrounds/"))
@@ -116,9 +116,66 @@ def main(): # pylint: disable=too-many-locals
 
 
         # Save the final image and the final mask
-        background.save_background(img_loc + filename + str(itera) + '.jpg')
-        background.save_background_mask(img_loc + "mask_" + filename +
+        background.save_background(img_loc + "gen/" + filename + str(itera) +
+                                   '.jpg')
+        background.save_background_mask(img_loc + "mask/mask_" + filename +
                                         str(itera) + '.jpg')
+
+
+    # VALIDATION PHASE #
+    validate(img_loc, os.environ['ND_DSET_FOLDER'], iter_nbr, cls)
+
+
+def validate(img_loc, txt_loc, iter_nbr, cls): # pylint: disable=too-many-branches
+    """Validate ouputs.
+
+    Args:
+        img_loc: A string representing image path.
+        txt_loc: A string representing txt path.
+        iter_nbr: An int representing the number of iterations.
+        cls: An int representing the class.
+
+    Returns:
+        None
+    """
+
+    print("Checking generated image number...", end="")
+    if op.validate_img_number(img_loc + "gen/", iter_nbr):
+        print("OK")
+    else:
+        print("ERR")
+
+    print("Checking generated mask number...", end="")
+    if op.validate_img_number(img_loc + "mask/", iter_nbr):
+        print("OK")
+    else:
+        print("ERR")
+
+    print("Checking generated textfile number...", end="")
+    if op.validate_img_number(txt_loc + 'txt/', iter_nbr):
+        print("OK")
+    else:
+        print("ERR")
+
+    print("\nChecking textfiles values...")
+    err_flag = False
+    for file_iter in range(1, op.get_file_number(txt_loc + 'txt/') + 1):
+        iter_list = []
+        with open(txt_loc + 'txt/iter' + str(file_iter) + '.txt') as fobj:
+            for line in fobj:
+                row = line.split()
+                for item in row:
+                    iter_list.append(float(item))
+        iter_list = [x for x in iter_list if x != float(cls)]
+        for number in iter_list:
+            if number > 1.0:
+                print("Bad value for iter file {}.".format(file_iter))
+                err_flag = True
+
+    if err_flag:
+        print("Txt files values error.")
+    else:
+        print("Txt files values OK")
 
 
 if __name__ == '__main__':
