@@ -32,6 +32,7 @@ class Background:
 
     def __init__(self, img_path, selection="auto"):
         """Init background image with img_path and selection mode"""
+
         self.img_path = img_path
         self.image = cv2.imread(img_path)
         self.mask = cv2.imread(img_path)
@@ -39,8 +40,6 @@ class Background:
         # self.rois = [(522, 1257, 1084, 193),
         #             (413, 1151, 279, 209),
         #             (1326, 1123, 316, 277)]
-        # self.rois = [(10, 18, 296, 209)]
-        # self.rois = [(29, 43, 258, 163)]
         self.rois = [(35, 49, 245, 144)]
 
 
@@ -53,6 +52,7 @@ class Background:
         Returns:
             None
         """
+
         self.mask[:] = (255, 255, 255)
 
 
@@ -68,6 +68,7 @@ class Background:
         Returns:
             None
         """
+
         if self.rois is not None:
 
             if input("ROI already present. Override? (Y/N)") == 'Y':
@@ -92,6 +93,7 @@ class Background:
             A tuple representing the row and the column in the background
             image matrix for the object to be input.
         """
+
         selected_delimiter = self.rois[randint(0, len(self.rois) - 1)]
         delim_row_b = selected_delimiter[1]
         delim_row_e = selected_delimiter[1] + selected_delimiter[3]
@@ -149,6 +151,7 @@ class Background:
         Returns:
             None
         """
+
         kernel = np.ones((3, 3), np.float32)/9
         nut_gray = cv2.cvtColor(nut.image, cv2.COLOR_BGR2GRAY)
         height, width = nut_gray.shape[:2]
@@ -200,7 +203,9 @@ class Background:
         Returns:
             None
         """
+
         cv2.imwrite(save_path, self.image)
+
 
     def save_background_mask(self, save_path):
         """Save the background image mask.
@@ -212,4 +217,5 @@ class Background:
         Returns:
             None
         """
+
         cv2.imwrite(save_path, self.mask)
