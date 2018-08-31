@@ -51,6 +51,21 @@ def main(): # pylint: disable=too-many-locals
         background = bg.Background(img_loc + "backgrounds/" +
                                    os.environ['ND_DSET_BG_NAME'] +
                                    str(random_bg_nbr) + '.jpeg')
+
+        if resize == 1:
+            background.image = op.resize_image(background.image, (rszx, rszy))
+            background.mask = op.resize_image(background.mask, (rszx, rszy))
+
+            # Get resize multiplier
+            mult_col, mult_row = op.get_resize_prop(320, 240, rszx, rszy)
+
+            # Resize ROI
+            new_roi = (int(background.rois[0][0]*mult_col),
+                       int(background.rois[0][1]*mult_row),
+                       int(background.rois[0][2]*mult_col),
+                       int(background.rois[0][3]*mult_row))
+            background.rois = [new_roi]
+
         background.init_mask()
 
         # Initialize text path
@@ -64,6 +79,12 @@ def main(): # pylint: disable=too-many-locals
             nut = nt.Nuts(img_loc + "nuts/" + object_name +
                           str(randint(1, 10)) + '.jpeg')
             rows, cols, _channels = nut.image.shape
+
+            if resize == 1:
+                nut.image = op.resize_image(nut.image,
+                                            (int(cols*mult_col), int(rows*mult_row)))
+                rows, cols, _channels = nut.image.shape
+
             nut_placer_row, nut_placer_col = background.get_nut_placer()
 
             # Apply nut transformation
