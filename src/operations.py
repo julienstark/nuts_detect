@@ -76,3 +76,18 @@ def write_nuts_info_file(cls, placer, nutshape, backshape, path):
     line = "{} {} {} {} {}\n".format(cls, new_x, new_y, new_wid, new_hgt)
     with open(path, 'a') as filen:
         filen.write(line)
+
+def validate_img_number(path, nbr):
+    """Validate if files are in sufficient number.
+
+    Args:
+        path: A string representing the folder to check.
+        nbr: An int representing the number to compare with.
+
+    Returns:
+        A boolean True if files in path are in number nbr. Else, False.
+    """
+
+    if get_file_number(path) == nbr:
+        return True
+    return False
