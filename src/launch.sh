@@ -12,6 +12,11 @@ do
       shift
       shift
       ;;
+    -i|--iter)
+      ITER="$2"
+      shift
+      shift
+      ;;
     -s|--scale)
       SCALE="$2"
       shift
@@ -38,4 +43,4 @@ set -- "${POSITIONAL[@]}"
 
 source setup_env.sh
 
-python3 main.py -n $NUMBER -s $SCALE -t $THRESHOLD -f $FILENAME
+python3 main.py -n $NUMBER -i $ITER -s $SCALE -t $THRESHOLD -f $FILENAME
