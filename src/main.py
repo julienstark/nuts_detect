@@ -12,8 +12,9 @@ from random import uniform
 
 import nuts as nt
 import background as bg
+import operations as op
 
-def main():
+def main(): # pylint: disable=too-many-locals
     """Main function for client loop."""
 
     # PYTHON PARSER VIA ARGPARSE #
@@ -21,6 +22,8 @@ def main():
     parser = argparse.ArgumentParser(description="Nuts Detect Dset Main.")
     parser.add_argument("-n", "--number", required=True,
                         help="Nuts number to input.", type=int)
+    parser.add_argument("-i", "--iter", required=True,
+                        help="Number of iterations.", type=int)
     parser.add_argument("-s", "--scale", help="Scale modification.",
                         nargs='?', default=0.25, type=float)
     parser.add_argument("-t", "--threshold", help="Threshold for nuts mask.",
@@ -30,6 +33,7 @@ def main():
     args = vars(parser.parse_args())
 
     nuts_nbr = args['number']
+    iter_nbr = args['iter']
     scale = float(args['scale'])
     threshold = int(args['threshold'])
     filename = args['filename']
@@ -38,38 +42,57 @@ def main():
 
     img_loc = os.environ['ND_DSET_FOLDER'] + 'imgs/data/'
     object_name = os.environ['ND_DSET_OBJ_NAME']
-    background = bg.Background(img_loc + os.environ['ND_DSET_BG_NAME'] +
-                               '.jpeg')
-    background.init_mask()
 
     # MAIN LOOP - OBJECT CREATION AND INPUT #
+    for itera in range(1, iter_nbr):
 
-    for _nut_nbr in range(nuts_nbr):
+        # Initialize background
+        random_bg_nbr = randint(1, op.get_file_number(img_loc + "backgrounds/"))
+        background = bg.Background(img_loc + "backgrounds/" +
+                                   os.environ['ND_DSET_BG_NAME'] +
+                                   str(random_bg_nbr) + '.jpeg')
+        background.init_mask()
 
-        nut = nt.Nuts(img_loc + object_name + str(randint(1, 10)) + '.jpeg')
+        # Initialize text path
+        file_path = (os.environ['ND_DSET_FOLDER'] + 'txt/iter' + str(itera) +
+                     ".txt")
 
-        # Apply nut transformation
-        random_scale = uniform(1 - scale, 1 + scale)
-        random_rot = randint(0, 180)
-        nut.scale_nut(height_scale=random_scale, width_scale=random_scale)
-        nut.rotate_nut(rotate_angle=random_rot)
+        # Start nuts loop
+        for _nut_nbr in range(nuts_nbr):
 
-        # Smooth nut edges via scaling (efficiency not assessed)
-        # nut.scale_nut(height_scale=(1-scale), width_scale=(1-scale))
-        # nut.scale_nut(height_scale=(1/(1-scale)), width_scale=(1/(1-scale)))
+            # Initialize locals
+            nut = nt.Nuts(img_loc + "nuts/" + object_name +
+                          str(randint(1, 10)) + '.jpeg')
+            rows, cols, _channels = nut.image.shape
+            nut_placer_row, nut_placer_col = background.get_nut_placer()
 
-        # Merge the nut in the background image and retrieve the mask
-        nut_placer_row, nut_placer_col = background.get_nut_placer()
-        background.input_nut(nut, nut_placer_row, nut_placer_col, threshold)
-        background.msk_input_nut(nut, nut_placer_row, nut_placer_col,
+            # Apply nut transformation
+            random_scale = uniform(1 - scale, 1 + scale)
+            random_rot = randint(0, 180)
+            nut.scale_nut(height_scale=random_scale, width_scale=random_scale)
+            nut.rotate_nut(rotate_angle=random_rot)
+
+            # Merge the nut in the background image and retrieve the mask
+            background.input_nut(nut, nut_placer_row, nut_placer_col,
                                  threshold)
+            background.msk_input_nut(nut, nut_placer_row, nut_placer_col,
+                                     threshold)
 
-        # Smooth some ugly edges
-        background.smoothing(nut, nut_placer_row, nut_placer_col)
+            # Smooth some ugly edges
+            background.smoothing(nut, nut_placer_row, nut_placer_col)
 
-    # Save the final image and the final mask
-    background.save_background(img_loc + filename)
-    background.save_background_mask(img_loc + "mask_" + filename)
+            # Write nuts info to the file
+            line = "1 {} {} {} {}\n".format(nut_placer_row, nut_placer_col,
+                                            cols, rows)
+            with open(file_path, 'a') as filen:
+                filen.write(line)
+
+
+        # Save the final image and the final mask
+        background.save_background(img_loc + filename + str(itera) + '.jpeg')
+        background.save_background_mask(img_loc + "mask_" + filename +
+                                        str(itera) + '.jpeg')
+
 
 if __name__ == '__main__':
     main()
