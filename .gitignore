@@ -1,3 +1,5 @@
 imgs/
+txt/
+output/
 *.pyc
 __pycache__/
