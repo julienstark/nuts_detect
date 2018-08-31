@@ -40,6 +40,7 @@ class Background:
         # self.rois = [(522, 1257, 1084, 193),
         #             (413, 1151, 279, 209),
         #             (1326, 1123, 316, 277)]
+        # (colb, rowb, cole, rowel)
         self.rois = [(35, 49, 245, 144)]
 
 
