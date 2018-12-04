@@ -1,16 +1,16 @@
 """
-Module supporting the Nuts class needed for generating nuts object
+Module supporting the Nuts class needed for generating object
 images for the Nuts Detect (ND) project.
 
-class Nuts: Creates a cv2 image based on a .jpeg and allows object
+class Item: Creates a cv2 image based on a .jpeg and allows object
 modification (scale, rotation) and mask obtention.
 """
 
 import cv2
 
 
-class Nuts:
-    """Create and manage a nut image.
+class Item:
+    """Create and manage a item image.
 
     Main class of the ND project, creates a cv2 image based on a .jpeg and
     represents an object to input. Can be modified in rotation and in scale,
@@ -22,14 +22,14 @@ class Nuts:
     """
 
     def __init__(self, img_path):
-        """Init nut image with img_path"""
+        """Init item image with img_path"""
 
         self.img_path = img_path
         self.image = cv2.imread(img_path)
 
 
-    def scale_nut(self, height_scale=1.25, width_scale=1.25):
-        """Scale the nut based on arg provided.
+    def scale_item(self, height_scale=1.25, width_scale=1.25):
+        """Scale the item based on arg provided.
 
         Args:
             height_scale: A float representing the scaling to apply to the
@@ -47,8 +47,8 @@ class Nuts:
                                  int(height_scale*height)))
 
 
-    def rotate_nut(self, rotate_angle=90):
-        """Rotate the nut based on the arg provided.
+    def rotate_item(self, rotate_angle=90):
+        """Rotate the item based on the arg provided.
 
         Args:
             rotate_angle: An int representing the angle used for image
@@ -65,7 +65,7 @@ class Nuts:
 
 
     def get_mask(self, threshold):
-        """Retrive object image mask.
+        """Retrieve object image mask.
 
         Args:
             threshold: An int representing the threshold value we want to use
@@ -76,7 +76,7 @@ class Nuts:
             inverse.
         """
 
-        nut_gray = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
-        _ret, mask = cv2.threshold(nut_gray, threshold, 255, cv2.THRESH_BINARY)
+        item_gray = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
+        _ret, mask = cv2.threshold(item_gray, threshold, 255, cv2.THRESH_BINARY)
         mask_inv = cv2.bitwise_not(mask)
         return (mask, mask_inv)
