@@ -84,8 +84,8 @@ class Background:
                 print("Aborting ROI creation..")
 
 
-    def get_nut_placer(self):
-        """Randomly select a ROI and a position in this ROI for nut placement.
+    def get_item_placer(self):
+        """Randomly select a ROI and a position in this ROI for item placement.
 
         Args:
             None
@@ -101,52 +101,52 @@ class Background:
         delim_col_b = selected_delimiter[0]
         delim_col_e = selected_delimiter[0] + selected_delimiter[2]
 
-        nut_placer_row = randint(delim_row_b, delim_row_e)
-        nut_placer_col = randint(delim_col_b, delim_col_e)
+        item_placer_row = randint(delim_row_b, delim_row_e)
+        item_placer_col = randint(delim_col_b, delim_col_e)
 
-        return (nut_placer_row, nut_placer_col)
+        return (item_placer_row, item_placer_col)
 
 
-    def input_nut(self, nut, nut_placer_row, nut_placer_col, threshold=50):
+    def input_item(self, item, item_placer_row, item_placer_col, threshold=50):
         """Take one object and merge it with the background image.
 
         Args:
-            nut: A nut object representing the object to merge.
+            item: An item object representing the object to merge.
             threshold: An int representing the threshold when creating
             object mask.
-            nut_placer_row: An int representing a position in the matrix
-            nut_placer_col: An int representing a position same as above
+            item_placer_row: An int representing a position in the matrix
+            item_placer_col: An int representing a position same as above
             but for column.
 
         Returns:
             None
         """
 
-        rows, cols, _channels = nut.image.shape
+        rows, cols, _channels = item.image.shape
 
-        roi = self.image[nut_placer_row:nut_placer_row + rows,
-                         nut_placer_col:nut_placer_col + cols]
+        roi = self.image[item_placer_row:item_placer_row + rows,
+                         item_placer_col:item_placer_col + cols]
 
-        mask, mask_inv = nut.get_mask(threshold)
+        mask, mask_inv = item.get_mask(threshold)
 
         background_bg = cv2.bitwise_and(roi, roi, mask=mask_inv)
-        nut_fg = cv2.bitwise_and(nut.image, nut.image, mask=mask)
+        item_fg = cv2.bitwise_and(item.image, item.image, mask=mask)
 
-        dst = cv2.add(background_bg, nut_fg)
-        self.image[nut_placer_row:nut_placer_row + rows,
-                   nut_placer_col:nut_placer_col + cols] = dst
+        dst = cv2.add(background_bg, item_fg)
+        self.image[item_placer_row:item_placer_row + rows,
+                   item_placer_col:item_placer_col + cols] = dst
 
 
-    def smoothing(self, nut, nut_placer_row, nut_placer_col):
+    def smoothing(self, item, item_placer_row, item_placer_col):
         """Smooth some edges on the nut.
 
         If the grayscale picture of the nut has one pixel level below a
         specific value, apply some smoothing on this pixel with a 3x3 filter.
 
         Args:
-            nut: A nut object representing the object to smooth.
-            nut_placer_row: An int representing a position in the matrix.
-            nut_placer_col: An int representing a position same as above
+            item: A nut object representing the object to smooth.
+            item_placer_row: An int representing a position in the matrix.
+            item_placer_col: An int representing a position same as above
             but for column.
 
         Returns:
@@ -154,44 +154,44 @@ class Background:
         """
 
         kernel = np.ones((3, 3), np.float32)/9
-        nut_gray = cv2.cvtColor(nut.image, cv2.COLOR_BGR2GRAY)
-        height, width = nut_gray.shape[:2]
+        item_gray = cv2.cvtColor(item.image, cv2.COLOR_BGR2GRAY)
+        height, width = item_gray.shape[:2]
         for i in range(height):
             for j in range(width):
-                if nut_gray[i, j] < 30:
-                    input_zone = self.image[nut_placer_row + i - 1:nut_placer_row + i + 1,
-                                            nut_placer_col + j - 1:nut_placer_col + j + 1]
+                if item_gray[i, j] < 30:
+                    input_zone = self.image[item_placer_row + i - 1:item_placer_row + i + 1,
+                                            item_placer_col + j - 1:item_placer_col + j + 1]
                     dst = cv2.filter2D(input_zone, -1, kernel)
-                    self.image[nut_placer_row + i - 1:nut_placer_row + i + 1,
-                               nut_placer_col + j - 1:nut_placer_col + j + 1] = dst
+                    self.image[item_placer_row + i - 1:item_placer_row + i + 1,
+                               item_placer_col + j - 1:item_placer_col + j + 1] = dst
 
 
-    def msk_input_nut(self, nut, nut_placer_row, nut_placer_col, threshold=50):
+    def msk_input_item(self, item, item_placer_row, item_placer_col, threshold=50):
         """Take one object and merge it with the background image mask.
 
         Args:
-            nut: A nut object representing the object to merge.
+            item: An item object representing the object to merge.
             threshold: An int representing the threshold when creating
             object mask.
-            nut_placer_row: An int representing a position in the matrix
-            nut_placer_col: An int representing a position same as above
+            item_placer_row: An int representing a position in the matrix
+            item_placer_col: An int representing a position same as above
             but for column.
 
         Returns:
             None
         """
 
-        rows, cols, _channels = nut.image.shape
+        rows, cols, _channels = item.image.shape
 
-        roi = self.mask[nut_placer_row:nut_placer_row + rows,
-                        nut_placer_col:nut_placer_col + cols]
+        roi = self.mask[item_placer_row:item_placer_row + rows,
+                        item_placer_col:item_placer_col + cols]
 
-        _mask, mask_inv = nut.get_mask(threshold)
+        _mask, mask_inv = item.get_mask(threshold)
 
         mask_background_bg = cv2.bitwise_and(roi, roi, mask=mask_inv)
 
-        self.mask[nut_placer_row:nut_placer_row + rows,
-                  nut_placer_col:nut_placer_col + cols] = mask_background_bg
+        self.mask[item_placer_row:item_placer_row + rows,
+                  item_placer_col:item_placer_col + cols] = mask_background_bg
 
 
     def save_background(self, save_path):
