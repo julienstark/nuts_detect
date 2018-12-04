@@ -30,19 +30,14 @@ class Background:
     """
 
 
-    def __init__(self, img_path, selection="auto"):
+    def __init__(self, img_path, rois=None, selection="auto"):
         """Init background image with img_path and selection mode"""
 
         self.img_path = img_path
         self.image = cv2.imread(img_path)
         self.mask = cv2.imread(img_path)
         self.selection = selection
-        # self.rois = [(522, 1257, 1084, 193),
-        #             (413, 1151, 279, 209),
-        #             (1326, 1123, 316, 277)]
-        # (colb, rowb, cole, rowel)
-        #self.rois = [(35, 49, 245, 144)]
-        self.rois = [(28, 53, 287, 195)]
+        self.rois = [rois]
 
 
     def init_mask(self):
