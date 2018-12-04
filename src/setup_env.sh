@@ -1,9 +1,9 @@
 # Main folder:
 export ND_DSET_FOLDER=$(pwd)/../
 # Prefix of the image name you would like to input:
-export ND_DSET_OBJ_NAME=nuts_
+export ND_DSET_OBJ_NAME=banana
 # Prefix of the background images names:
-export ND_DSET_BG_NAME=backgrd
+export ND_DSET_BG_NAME=background
 # Put 1 if your want to enable img resizing, 0 otherwise:
 export ND_DSET_RESIZE_FLAG=1
 # If resizing is set, the new col number for the background image:
