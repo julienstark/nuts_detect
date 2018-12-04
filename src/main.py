@@ -56,7 +56,7 @@ def main(): # pylint: disable=too-many-locals,too-many-statements
         random_bg_nbr = randint(1, op.get_file_number(img_loc + "backgrounds/"))
         background = bg.Background(img_loc + "backgrounds/" +
                                    os.environ['ND_DSET_BG_NAME'] +
-                                   str(random_bg_nbr) + '.jpeg')
+                                   "_" + str(random_bg_nbr) + '.jpeg')
 
         # Resize if flag set and adapt rois accordingly
         if resize == 1:
