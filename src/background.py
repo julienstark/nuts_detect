@@ -41,7 +41,8 @@ class Background:
         #             (413, 1151, 279, 209),
         #             (1326, 1123, 316, 277)]
         # (colb, rowb, cole, rowel)
-        self.rois = [(35, 49, 245, 144)]
+        #self.rois = [(35, 49, 245, 144)]
+        self.rois = [(28, 53, 287, 195)]
 
 
     def init_mask(self):
