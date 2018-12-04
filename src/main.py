@@ -85,7 +85,7 @@ def main(): # pylint: disable=too-many-locals,too-many-statements
         for _item_nbr in range(items_nbr):
 
             # Initialize locals
-            item = nt.Item(img_loc + "items/" + object_name +
+            item = nt.Item(img_loc + "items/" + object_name + "_" +
                            str(randint(1, 10)) + '.jpeg')
             rows, cols, _channels = item.image.shape
 
