@@ -58,12 +58,15 @@ def main(): # pylint: disable=too-many-locals,too-many-statements
                                    os.environ['ND_DSET_BG_NAME'] +
                                    str(random_bg_nbr) + '.jpeg')
 
+        # Resize if flag set and adapt rois accordingly
         if resize == 1:
             background.image = op.resize_image(background.image, (rszx, rszy))
             background.mask = op.resize_image(background.mask, (rszx, rszy))
 
             # Get resize multiplier
-            mult_col, mult_row = op.get_resize_prop(320, 240, rszx, rszy)
+            mult_col, mult_row = op.get_resize_prop(background.image.shape[0],
+                                                    background.image.shape[1],
+                                                    rszx, rszy)
 
             # Resize ROI
             new_roi = (int(background.rois[0][0]*mult_col),
