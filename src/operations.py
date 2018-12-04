@@ -54,13 +54,13 @@ def get_resize_prop(in_col, in_row, out_col, out_row):
 
     return (col_prop, row_prop)
 
-def write_nuts_info_file(cls, placer, nutshape, backshape, path):
-    """Write nuts position to file.
+def write_item_info_file(cls, placer, itemshape, backshape, path):
+    """Write item position to file.
 
     Args:
         cls: An integer representing the class number.
         placer: A tuple representing the obj topleft row and col.
-        nutshape: A tuple representing the obj row and column size.
+        itemshape: A tuple representing the obj row and column size.
         backshape: A tuple representing the image height and width.
         path: A string representing the file path.
 
@@ -68,10 +68,10 @@ def write_nuts_info_file(cls, placer, nutshape, backshape, path):
         None
     """
 
-    new_x = (float(placer[1]) + (nutshape[1] / 2.0)) / float(backshape[1])
-    new_y = (float(placer[0]) + (nutshape[0] / 2.0)) / float(backshape[0])
-    new_wid = float(nutshape[1] / backshape[1])
-    new_hgt = float(nutshape[0] / backshape[0])
+    new_x = (float(placer[1]) + (itemshape[1] / 2.0)) / float(backshape[1])
+    new_y = (float(placer[0]) + (itemshape[0] / 2.0)) / float(backshape[0])
+    new_wid = float(itemshape[1] / backshape[1])
+    new_hgt = float(itemshape[0] / backshape[0])
 
     line = "{} {} {} {} {}\n".format(cls, new_x, new_y, new_wid, new_hgt)
     with open(path, 'a') as filen:
