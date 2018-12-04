@@ -10,7 +10,7 @@ import argparse
 from random import randint
 from random import uniform
 
-import nuts as nt
+import item as nt
 import background as bg
 import operations as op
 
@@ -21,18 +21,18 @@ def main(): # pylint: disable=too-many-locals,too-many-statements
 
     parser = argparse.ArgumentParser(description="Nuts Detect Dset Main.")
     parser.add_argument("-n", "--number", required=True,
-                        help="Nuts number to input.", type=int)
+                        help="Items number to input.", type=int)
     parser.add_argument("-i", "--iter", required=True,
                         help="Number of iterations.", type=int)
     parser.add_argument("-s", "--scale", help="Scale modification.",
                         nargs='?', default=0.25, type=float)
-    parser.add_argument("-t", "--threshold", help="Threshold for nuts mask.",
+    parser.add_argument("-t", "--threshold", help="Threshold for items mask.",
                         nargs='?', default=50, type=int)
     parser.add_argument("-f", "--filename", help="Name for the saved image.",
                         nargs='?', default='test_bg.jpeg', type=str)
     args = vars(parser.parse_args())
 
-    nuts_nbr = args['number']
+    items_nbr = args['number']
     iter_nbr = args['iter']
     scale = float(args['scale'])
     threshold = int(args['threshold'])
@@ -81,42 +81,42 @@ def main(): # pylint: disable=too-many-locals,too-many-statements
         file_path = (os.environ['ND_DSET_FOLDER'] + 'txt/iter' + str(itera) +
                      ".txt")
 
-        # Start nuts loop
-        for _nut_nbr in range(nuts_nbr):
+        # Start items loop
+        for _item_nbr in range(items_nbr):
 
             # Initialize locals
-            nut = nt.Nuts(img_loc + "nuts/" + object_name +
-                          str(randint(1, 10)) + '.jpeg')
-            rows, cols, _channels = nut.image.shape
+            item = nt.Item(img_loc + "items/" + object_name +
+                           str(randint(1, 10)) + '.jpeg')
+            rows, cols, _channels = item.image.shape
 
             if resize == 1:
-                nut.image = op.resize_image(nut.image,
-                                            (int(cols*mult_col), int(rows*mult_row)))
-                rows, cols, _channels = nut.image.shape
+                item.image = op.resize_image(item.image,
+                                             (int(cols*mult_col), int(rows*mult_row)))
+                rows, cols, _channels = item.image.shape
 
-            nut_placer_row, nut_placer_col = background.get_nut_placer()
+            item_placer_row, item_placer_col = background.get_item_placer()
 
-            # Apply nut transformation
+            # Apply item transformation
             random_scale = uniform(1 - scale, 1 + scale)
             random_rot = randint(0, 180)
-            nut.scale_nut(height_scale=random_scale, width_scale=random_scale)
-            nut.rotate_nut(rotate_angle=random_rot)
+            item.scale_item(height_scale=random_scale, width_scale=random_scale)
+            item.rotate_item(rotate_angle=random_rot)
 
-            # Merge the nut in the background image and retrieve the mask
-            background.input_nut(nut, nut_placer_row, nut_placer_col,
-                                 threshold)
-            background.msk_input_nut(nut, nut_placer_row, nut_placer_col,
-                                     threshold)
+            # Merge the item in the background image and retrieve the mask
+            background.input_item(item, item_placer_row, item_placer_col,
+                                  threshold)
+            background.msk_input_item(item, item_placer_row, item_placer_col,
+                                      threshold)
 
             # Smooth some ugly edges
-            background.smoothing(nut, nut_placer_row, nut_placer_col)
+            background.smoothing(item, item_placer_row, item_placer_col)
 
-            # Write nuts info to the file
+            # Write items info to the file
             hgt, wid, _chan = background.image.shape
             backshape = (hgt, wid)
-            nutshape = (rows, cols)
-            placer = (nut_placer_row, nut_placer_col)
-            op.write_nuts_info_file(cls, placer, nutshape, backshape,
+            itemshape = (rows, cols)
+            placer = (item_placer_row, item_placer_col)
+            op.write_item_info_file(cls, placer, itemshape, backshape,
                                     file_path)
 
 
