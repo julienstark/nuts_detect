@@ -147,7 +147,7 @@ def validate(img_loc, txt_loc, iter_nbr, cls, filename): # pylint: disable=too-m
         txt_loc: A string representing txt path.
         iter_nbr: An int representing the number of iterations.
         cls: An int representing the class.
-        filename: PLACEHOLDER
+        filename: A string representing the name of the output files.
 
     Returns:
         None
