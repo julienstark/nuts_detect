@@ -84,8 +84,8 @@ def main(): # pylint: disable=too-many-locals,too-many-statements
         background.init_mask()
 
         # Initialize text path
-        file_path = (os.environ['ND_DSET_FOLDER'] + 'txt/iter' + str(itera) +
-                     ".txt")
+        file_path = (os.environ['ND_DSET_FOLDER'] + 'txt/' + filename +
+                     str(itera) + ".txt")
 
         # Start items loop
         for _item_nbr in range(items_nbr):
@@ -136,10 +136,10 @@ def main(): # pylint: disable=too-many-locals,too-many-statements
 
     # VALIDATION PHASE #
     print("\n ** Validation Phase **")
-    validate(img_loc, os.environ['ND_DSET_FOLDER'], iter_nbr, cls)
+    validate(img_loc, os.environ['ND_DSET_FOLDER'], iter_nbr, cls, filename)
 
 
-def validate(img_loc, txt_loc, iter_nbr, cls): # pylint: disable=too-many-branches
+def validate(img_loc, txt_loc, iter_nbr, cls, filename): # pylint: disable=too-many-branches
     """Validate ouputs.
 
     Args:
@@ -147,6 +147,7 @@ def validate(img_loc, txt_loc, iter_nbr, cls): # pylint: disable=too-many-branch
         txt_loc: A string representing txt path.
         iter_nbr: An int representing the number of iterations.
         cls: An int representing the class.
+        filename: PLACEHOLDER
 
     Returns:
         None
@@ -179,7 +180,8 @@ def validate(img_loc, txt_loc, iter_nbr, cls): # pylint: disable=too-many-branch
     err_flag = False
     for file_iter in range(1, op.get_file_number(txt_loc + 'txt/') + 1):
         iter_list = []
-        with open(txt_loc + 'txt/iter' + str(file_iter) + '.txt') as fobj:
+        with open(txt_loc + 'txt/' + filename + str(file_iter) +
+                  '.txt') as fobj:
             for line in fobj:
                 row = line.split()
                 for item in row:
